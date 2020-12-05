@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>AT-Lab Map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<!--popup-->    
+<style>
+.mapboxgl-popup {
+max-width: 400px;
+font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+</style>
+<!--Start map container-->    
+<div id="map"></div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoicGxhbnRncm91cCIsImEiOiJja2lhcWdlMTYwZG43MzJzM2U3ZWhiOG53In0.eJYrULAVy1u-nzlr0blwQw';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/outdoors-v11',
+center: [-73.98500000, 41.49138889],
+zoom: 14
+});
+ 
+// AT-Lab popUp    
+var popup = new mapboxgl.Popup({ closeOnClick: false })
+.setLngLat([-73.98500000, 41.49138889])
+.setHTML('<h1>BIRE AT-Lab</h1>')
+.addTo(map);
+    
+// Image PINS for invasives feature 
+//MAP LOAD
+map.on('load', function () {
+map.loadImage(
+'https://cdn.glitch.com/80a520e8-7f8f-41e2-9eab-e3f8aedadb7b%2Ftrapa.png?v=1607196306530',
+function (error, image) {
+if (error) throw error;
+map.addImage('trapa', image);
+// add SOURCE     
+map.addSource('point', {
+'type': 'geojson',
+'data': {
+'type': 'FeatureCollection',
+'features': [
+{
+'type': 'Feature',
+'properties': {
+    'description': '<strong>Trapa natans</strong><p>The European water chestnut (Trapa natans), an invasive aquatic plant released inadvertently into waters of the Northeast in the late 1800s, is slowly but inexorably spreading throughout New York State, clogging waterways, lakes and ponds and altering aquatic habitats.</p>'
+},    
+'geometry': {
+'type': 'Point',
+'coordinates': [-73.98555556, 41.49472222]
+}
+},
+ {
+'type': 'Feature',
+'properties': {
+    'description': '<strong>Trapa natans</strong><p>The European water chestnut (Trapa natans), an invasive aquatic plant released inadvertently into waters of the Northeast in the late 1800s, is slowly but inexorably spreading throughout New York State, clogging waterways, lakes and ponds and altering aquatic habitats.</p>'
+},
+'geometry': {
+'type': 'Point',
+'coordinates': [-73.98333333, 41.48694444]
+}
+}   
+    
+ // end features    
+]
+    
+}
+});
+// ADD LAYER     
+map.addLayer({
+'id': 'points',
+'type': 'symbol',
+'source': 'point',
+'layout': {
+'icon-image': 'trapa',
+'icon-allow-overlap': true,
+'icon-size': 0.10
+}
+});
+    
+// create popup for when hovering over IMG
+var popup = new mapboxgl.Popup({
+closeButton: false,
+closeOnClick: false
+});
+// HOVER MOUSE SHIT 
+map.on('mouseenter', 'points', function (e) {
+// Change the cursor style as a UI indicator.
+map.getCanvas().style.cursor = 'pointer';
+ 
+var coordinates = e.features[0].geometry.coordinates.slice();
+var description = e.features[0].properties.description;
+ 
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+ 
+// Populate the popup and set its coordinates
+// based on the feature found.
+popup.setLngLat(coordinates).setHTML(description).addTo(map);
+});
+// END HOVER HOUSE MOUSE SHIT 
+map.on('mouseleave', 'points', function () {
+map.getCanvas().style.cursor = '';
+popup.remove();
+});
+// CLOSE MOUSE FUNCTION     
+}
+);
+    
+/// ADD ANOTHER IMAGE FOR THE GARLIC MUSTARD     
+///////////
+    
+map.loadImage(
+'https://cdn.glitch.com/80a520e8-7f8f-41e2-9eab-e3f8aedadb7b%2Fgarlic.png?v=1607199288925',
+function (error, image) {
+if (error) throw error;
+map.addImage('garlic', image);
+// add SOURCE     
+map.addSource('pointG', {
+'type': 'geojson',
+'data': {
+'type': 'FeatureCollection',
+'features': [
+{
+'type': 'Feature',
+'properties': {
+    'description': '<strong>Garlic mustard</strong><p>Introduced from Europe originally as a food plant, this species is now a serious concern in forests across North America. Garlic mustard is an invasive non-native biennial herb that spreads by seed. Although edible for people, it is not eaten by local wildlife or insects.</p>'
+},    
+'geometry': {
+'type': 'Point',
+'coordinates': [-73.98722222, 41.48750000]
+}
+}   
+ // end features    
+]
+    
+}
+});
+// ADD LAYER     
+map.addLayer({
+'id': 'pointsG',
+'type': 'symbol',
+'source': 'pointG',
+'layout': {
+'icon-image': 'garlic',
+'icon-allow-overlap': true,
+'icon-size': 0.10
+}
+});
+    
+// create popup for when hovering over IMG
+var popup = new mapboxgl.Popup({
+closeButton: false,
+closeOnClick: false
+});
+// HOVER MOUSE SHIT 
+map.on('mouseenter', 'pointsG', function (e) {
+// Change the cursor style as a UI indicator.
+map.getCanvas().style.cursor = 'pointer';
+ 
+var coordinates = e.features[0].geometry.coordinates.slice();
+var description = e.features[0].properties.description;
+ 
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+ 
+// Populate the popup and set its coordinates
+// based on the feature found.
+popup.setLngLat(coordinates).setHTML(description).addTo(map);
+});
+// END HOVER HOUSE MOUSE SHIT 
+map.on('mouseleave', 'pointsG', function () {
+map.getCanvas().style.cursor = '';
+popup.remove();
+});
+// CLOSE MOUSE FUNCTION     
+}
+);
+//// END GARLIC MUSTARD SECTION     
+});
+/// end popup section   
+ 
+    
+</script>
+ 
+</body>
+</html>
