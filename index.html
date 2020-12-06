@@ -18,9 +18,42 @@
 max-width: 400px;
 font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+    
+.calculation-box {
+height: 75px;
+width: 150px;
+position: absolute;
+bottom: 40px;
+left: 10px;
+background-color: rgba(255, 255, 255, 0.9);
+padding: 15px;
+text-align: center;
+}
+   
+p {
+font-family: 'Open Sans';
+margin: 0;
+font-size: 13px;
+}
 </style>
+    
+<!-- Draw Polygon libraries--> 
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.0/mapbox-gl-draw.js"></script>
+<link
+rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.0/mapbox-gl-draw.css"
+type="text/css"
+/>
+    
 <!--Start map container-->    
 <div id="map"></div>
+<!--draw polygon-->
+<div class="calculation-box">
+<p>Draw a polygon using the draw tools.</p>
+<div id="calculated-area"></div>
+</div>   
+    
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoicGxhbnRncm91cCIsImEiOiJja2lhcWdlMTYwZG43MzJzM2U3ZWhiOG53In0.eJYrULAVy1u-nzlr0blwQw';
 var map = new mapboxgl.Map({
@@ -29,11 +62,45 @@ style: 'mapbox://styles/mapbox/outdoors-v11',
 center: [-73.98500000, 41.49138889],
 zoom: 14
 });
- 
+
+// draw POLYGON 
+    
+var draw = new MapboxDraw({
+displayControlsDefault: false,
+controls: {
+polygon: true,
+trash: true
+}
+});
+map.addControl(draw);
+map.on('draw.create', updateArea);
+map.on('draw.delete', updateArea);
+map.on('draw.update', updateArea);
+
+function updateArea(e) {
+var data = draw.getAll();
+var answer = document.getElementById('calculated-area');
+if (data.features.length > 0) {
+var area = turf.area(data);
+// restrict to area to 2 decimal points
+var rounded_area = Math.round(area * 100) / 100;
+answer.innerHTML =
+'<p><strong>' +
+rounded_area +
+'</strong></p><p>square meters</p>';
+} else {
+answer.innerHTML = '';
+if (e.type !== 'draw.delete')
+alert('Use the draw tool in upper left corner to draw a polygon!');
+}
+}
+    
+// end draw polygon function 
+    
 // AT-Lab popUp    
 var popup = new mapboxgl.Popup({ closeOnClick: false })
 .setLngLat([-73.98500000, 41.49138889])
-.setHTML('<h1>BIRE AT-Lab</h1>')
+.setHTML('<h1>BIRE AT-Lab</h1><p>Close the window and get started exploring invasive species clusters in Dennings Point State Park. Learn more about our citizen science programs <a href="https://www.clarkson.edu/research-beacon-institute" target="_blank">here</a>.</p>')
 .addTo(map);
     
 // Image PINS for invasives feature 
