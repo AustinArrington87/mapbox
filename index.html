@@ -48,12 +48,15 @@ type="text/css"
     
 <!--Start map container-->    
 <div id="map"></div>
+    
+    
 <!--draw polygon-->
+    <!--
 <div class="calculation-box">
 <p>Draw a polygon using the draw tools.</p>
 <div id="calculated-area"></div>
 </div>   
-    
+    -->
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoicGxhbnRncm91cCIsImEiOiJja2lhcWdlMTYwZG43MzJzM2U3ZWhiOG53In0.eJYrULAVy1u-nzlr0blwQw';
 var map = new mapboxgl.Map({
@@ -64,7 +67,7 @@ zoom: 14
 });
 
 // draw POLYGON 
-    
+/*
 var draw = new MapboxDraw({
 displayControlsDefault: false,
 controls: {
@@ -94,7 +97,7 @@ if (e.type !== 'draw.delete')
 alert('Use the draw tool in upper left corner to draw a polygon!');
 }
 }
-    
+*/ 
 // end draw polygon function 
     
 // AT-Lab popUp    
@@ -270,3 +273,4 @@ popup.remove();
  
 </body>
 </html>
+
