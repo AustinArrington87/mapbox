@@ -267,10 +267,21 @@ popup.remove();
 //// END GARLIC MUSTARD SECTION     
 });
 /// end popup section   
- 
+ // Add geolocate control to the map.
+// Initialize the geolocate control.
+var geolocate = new mapboxgl.GeolocateControl({
+positionOptions: {
+enableHighAccuracy: true
+},
+trackUserLocation: true
+});
+// Add the control to the map.
+map.addControl(geolocate);
+map.on('load', function() {
+geolocate.trigger();
+});
     
 </script>
  
 </body>
 </html>
-
